@@ -14,7 +14,7 @@ struct TimeTransformStruct {
 };
 
 float apply_transform(TimeTransform* t, float f) {
-    t->f(t, f);
+    return t->f(t, f);
 }
 
 /* identity transform */
@@ -32,7 +32,7 @@ TimeTransform* identity_transform() {
 /* sinusoid transform */
 
 float sinusoid_transform_function(TimeTransform* t, float f) {
-    return sinf(f * G_PI_2);
+    return sin(f * G_PI_2);
 }
 
 TimeTransform* sinusoid_transform() {
@@ -62,7 +62,7 @@ typedef struct ExpTransformStruct {
 
 float exp_transform_function(TimeTransform* t, float f) {
     ExpTransform* e = (ExpTransform*)t;
-    return powf(f, e->exp);
+    return pow(f, e->exp);
 }
 
 TimeTransform* exp_transform(float exp) {
