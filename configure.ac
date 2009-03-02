@@ -6,7 +6,6 @@ AC_INIT(libanim, 0.1, dubs@lenovo.com)
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_CONFIG_SRCDIR([src/anim.c])
 AC_CONFIG_HEADER([config.h])
-AC_CONFIG_MACRO_DIR([m4])
 
 # Checks for programs.
 AC_PROG_CC
