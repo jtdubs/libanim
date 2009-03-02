@@ -53,22 +53,22 @@ TimeTransform* reverse_transform() {
     return t;
 }
 
-/* exp transform */
+/* exponent transform */
 
-typedef struct ExpTransformStruct {
+typedef struct exponentonentTransformStruct {
     TimeTransform t;
-    float exp;
-} ExpTransform;
+    float exponent;
+} exponentonentTransform;
 
-float exp_transform_function(TimeTransform* t, float f) {
-    ExpTransform* e = (ExpTransform*)t;
-    return pow(f, e->exp);
+float exponent_transform_function(TimeTransform* t, float f) {
+    exponentonentTransform* e = (exponentonentTransform*)t;
+    return pow(f, e->exponent);
 }
 
-TimeTransform* exp_transform(float exp) {
-    ExpTransform* t = malloc(sizeof(ExpTransform));
-    t->t.f = exp_transform_function;
-    t->exp = exp;
+TimeTransform* exponent_transform(float exponent) {
+    exponentonentTransform* t = malloc(sizeof(exponentonentTransform));
+    t->t.f = exponent_transform_function;
+    t->exponent = exponent;
     return (TimeTransform*)t;
 }
 
@@ -429,10 +429,18 @@ Animation* delay(Animation* a, float d) {
     return sequence(scale(null_animation(), d), a);
 }
 
+Animation* identity(Animation* a) {
+    return transform(a, identity_transform());
+}
+
 Animation* sinusoid(Animation* a) {
     return transform(a, sinusoid_transform());
 }
 
 Animation* reverse(Animation* a) {
     return transform(a, reverse_transform());
+}
+
+Animation* exponent(Animation* a, float f) {
+    return transform(a, exponent_transform(f));
 }

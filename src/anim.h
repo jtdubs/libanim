@@ -1,19 +1,6 @@
 #ifndef __ANIM_H__
 #define __ANIM_H__
 
-/* time transformations */
-
-struct TimeTransformStruct;
-typedef struct TimeTransformStruct TimeTransform;
-
-float apply_transform(TimeTransform* t, float f);
-
-TimeTransform* identity_transform();
-TimeTransform* sinusoid_transform();
-TimeTransform* reverse_transform();
-TimeTransform* exp_transform(float exp);
-
-
 /* animations */
 
 struct AnimationStruct;
@@ -34,6 +21,17 @@ Animation* lineari1(int*   v, int   start, int   end);
 Animation* bezierf(float* v, int n, int m, float** control_points);
 
 
+/* time transformations */
+
+struct TimeTransformStruct;
+typedef struct TimeTransformStruct TimeTransform;
+
+TimeTransform* identity_transform();
+TimeTransform* sinusoid_transform();
+TimeTransform* reverse_transform();
+TimeTransform* exponent_transform(float);
+
+
 /* primitive modifiers */
 
 Animation* scale(Animation* a, float scale_factor);
@@ -46,7 +44,10 @@ Animation* parallel(Animation* a1, Animation* a2);
 /* high-level modifiers */
 
 Animation* delay(Animation* a, float d);
+
+Animation* identity(Animation *a);
 Animation* sinusoid(Animation *a);
 Animation* reverse(Animation *a);
+Animation* exponent(Animation* a, float f);
 
 #endif
