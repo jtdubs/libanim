@@ -46,7 +46,7 @@ TimeTransform* identity_transform() {
 /* sinusoid transform */
 
 float sinusoid_transform_function(TimeTransform* t, float f) {
-    return sin(f * G_PI_2);
+    return (1.0 + sin((f * G_PI) - G_PI_2)) / 2.0;
 }
 
 TimeTransform* sinusoid_transform() {
