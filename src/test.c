@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 void assert_float_equal(float f1, float f2) {
-	g_assert_cmpfloat(fabs(f1-f2), <, 0.00001);
+	g_assert_cmpfloat(fabs(f1-f2), <, FLT_MIN);
 }
 
 void test_null() {
