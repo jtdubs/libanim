@@ -448,6 +448,21 @@ Animation* sequence(Animation* a1, Animation* a2) {
     return (Animation*)a;
 }
 
+Animation* sequencen(Animation *a1, ...) {
+    Animation *result = a1;
+
+    va_list args;
+    va_start(args, a1);
+    while (TRUE) {
+        Animation* a = va_arg(args, Animation*);
+        if (a == NULL)
+            break;
+        result = sequence(result, a);
+    }
+
+    return result;
+}
+
 /* parallel animation */
 
 typedef struct ParallelAnimationStruct {
@@ -486,6 +501,21 @@ Animation* parallel(Animation* a1, Animation* a2) {
     a->a1 = a1;
     a->a2 = a2;
     return (Animation*)a;
+}
+
+Animation* paralleln(Animation *a1, ...) {
+    Animation *result = a1;
+
+    va_list args;
+    va_start(args, a1);
+    while (TRUE) {
+        Animation* a = va_arg(args, Animation*);
+        if (a == NULL)
+            break;
+        result = parallel(result, a);
+    }
+
+    return result;
 }
 
 /* higher-level operations */

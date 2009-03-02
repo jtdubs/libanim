@@ -56,6 +56,9 @@ Animation* transform(Animation* a, TimeTransform* t); /* applies an internal tim
 Animation* sequence(Animation* a1, Animation* a2); /* perform two animations in sequence */
 Animation* parallel(Animation* a1, Animation* a2); /* perform two animations in parallel */
 
+Animation* sequencen(Animation *a1, ...); /* sequence a null-terminated list of animations */
+Animation* paralleln(Animation *a1, ...); /* parallel a null-terminated list of animations */
+
 
 /* High-Level Modifiers
  *
