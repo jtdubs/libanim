@@ -158,7 +158,7 @@ void test_delay() {
 
 void scenario_one() {
 	float x, y;
-	Animation* a = parallel(sequence(scale(linearf1(&x, 0, 3), 3), linearf1(&x, 3, 1)),
+	Animation* a = parallel(sequence(scale(linearf1(&x, 0, 3), 3), reverse(linearf1(&x, 1, 3))),
                             scale(linearf1(&y, 1, 5), 4));
 
     update_animation(a, 0.0); assert_float_equal(x, 0.0); assert_float_equal(y, 1.0);
