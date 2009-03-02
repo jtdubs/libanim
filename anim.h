@@ -21,6 +21,7 @@ typedef struct AnimationStruct Animation;
 
 void  update_animation(Animation* a, float f);
 float animation_duration(Animation* a);
+void  free_animation(Animation* a);
 
 Animation* null_animation();
 

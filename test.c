@@ -12,7 +12,8 @@ void test_null() {
     Animation* a = null_animation();
     update_animation(a, 0.0);
     update_animation(a, 1.0);
-    g_assert_cmpfloat(animation_duration(a), ==, 1.0);
+    assert_float_equal(animation_duration(a), 1.0);
+    free_animation(a);
 }
 
 void test_linearf_one_dimension_unit() {
@@ -169,6 +170,8 @@ void scenario_one() {
     update_animation(a, 3.0); assert_float_equal(x, 3.0); assert_float_equal(y, 4.0);
     update_animation(a, 3.5); assert_float_equal(x, 2.0); assert_float_equal(y, 4.5);
     update_animation(a, 4.0); assert_float_equal(x, 1.0); assert_float_equal(y, 5.0);
+
+    free_animation(a);
 }
 
 void test_bezier_one_dimension_one() {
@@ -187,6 +190,8 @@ void test_bezier_one_dimension_one() {
     update_animation(a, 0.0); assert_float_equal(v, 0.0);
     update_animation(a, 0.5); assert_float_equal(v, 0.5);
     update_animation(a, 1.0); assert_float_equal(v, 1.0);
+
+    free_animation(a);
 }
 
 void test_bezier_one_dimension_two() {
@@ -206,6 +211,8 @@ void test_bezier_one_dimension_two() {
     update_animation(a, 0.0); assert_float_equal(v, 0.0);
     update_animation(a, 0.5); assert_float_equal(v, 0.5);
     update_animation(a, 1.0); assert_float_equal(v, 0.0);
+
+    free_animation(a);
 }
 
 void test_bezier_three_dimension_one() {
@@ -225,6 +232,8 @@ void test_bezier_three_dimension_one() {
     update_animation(a, 0.0); assert_float_equal(v[0], 0.0); assert_float_equal(v[1], 0.0); assert_float_equal(v[2], 0.0);
     update_animation(a, 0.5); assert_float_equal(v[0], 0.5); assert_float_equal(v[1], 1.0); assert_float_equal(v[2], 1.5);
     update_animation(a, 1.0); assert_float_equal(v[0], 0.0); assert_float_equal(v[1], 0.0); assert_float_equal(v[2], 0.0);
+
+    free_animation(a);
 }
 
 int main(int argc, char** argv) {
