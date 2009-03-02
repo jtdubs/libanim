@@ -1,6 +1,7 @@
 lib_LTLIBRARIES = libanim.la
-bin_PROGRAMS = example
+noinst_PROGRAMS = example
 check_PROGRAMS = test
+include_HEADERS = anim.h
 
 TESTS = test
 
