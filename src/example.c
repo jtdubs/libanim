@@ -6,17 +6,16 @@ float x=0, y=0, z=0;
 void show_animation(Animation* a, float step);
 
 int main() {
-    Animation* a = paralleln(sequencen(sinusoid(scale(linearf1(&x, 0, 4), 5)),
-                                       sinusoid(scale(linearf1(&x, 4, 2), 3)),
-                                       NULL),
-                             sequencen(delay(sinusoid(scale(linearf1(&y, 0, 4), 3)), 3),
-                                       scale(holdf1(&y, 4), 2),
-                                       NULL),
-                             sequencen(scale(linearf1(&z, 2, 1), 3),
-                                       scale(linearf1(&z, 1, 3), 3),
-                                       scale(linearf1(&z, 3, 1), 2),
-                                       NULL),
-                             NULL);
+    Animation* a = parallelpn(sequencen(sinusoid(scale(linearf1(&x, 0, 4), 5)),
+                                        sinusoid(scale(linearf1(&x, 4, 2), 3)),
+                                        NULL),
+                              sequencen(delay(sinusoid(scale(linearf1(&y, 0, 4), 3)), 3),
+                                        NULL),
+                              sequencen(scale(linearf1(&z, 2, 1), 3),
+                                        scale(linearf1(&z, 1, 3), 3),
+                                        scale(linearf1(&z, 3, 1), 2),
+                                        NULL),
+                              NULL);
     show_animation(a, 0.02);
     return 0;
 }

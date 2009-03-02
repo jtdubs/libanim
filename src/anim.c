@@ -518,11 +518,46 @@ Animation* paralleln(Animation *a1, ...) {
     return result;
 }
 
+Animation* parallelp(Animation *a1, Animation* a2) {
+    float d1 = animation_duration(a1), d2 = animation_duration(a2);
+
+    if (d1 < d2)
+        return parallel(pad_to(a1, d2), a2);
+
+    if (d1 > d2)
+        return parallel(a1, pad_to(a2, d1));
+
+    return parallel(a1, a2);
+}
+
+Animation* parallelpn(Animation *a1, ...) {
+    Animation *result = a1;
+
+    va_list args;
+    va_start(args, a1);
+    while (TRUE) {
+        Animation* a = va_arg(args, Animation*);
+        if (a == NULL)
+            break;
+        result = parallelp(result, a);
+    }
+
+    return result;
+}
+
 /* higher-level operations */
 
 Animation* delay(Animation* a, float d) {
     g_assert(a != NULL);
     return sequence(scale(null_animation(), d), a);
+}
+
+Animation* pad_by(Animation* a, float d) {
+    return sequence(a, scale(null_animation(), d));
+}
+
+Animation* pad_to(Animation* a, float d) {
+    return pad_by(a, d - animation_duration(a));
 }
 
 Animation* identity(Animation* a) {

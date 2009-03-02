@@ -59,13 +59,18 @@ Animation* parallel(Animation* a1, Animation* a2); /* perform two animations in 
 Animation* sequencen(Animation *a1, ...); /* sequence a null-terminated list of animations */
 Animation* paralleln(Animation *a1, ...); /* parallel a null-terminated list of animations */
 
+Animation* parallelp(Animation *a1, Animation* a2); /* parallel two animations, padding the shorter */
+Animation* parallelpn(Animation *a1, ...);          /* parallel a null-terminated list of animations, padding the shorter ones */
+
 
 /* High-Level Modifiers
  *
  * These modifiers are built upon the primitive modifiers.
  */
 
-Animation* delay(Animation* a, float d); /* delay the start of an animation by d units of time */
+Animation* delay(Animation* a, float d);  /* delay the start of an animation by d units of time */
+Animation* pad_by(Animation* a, float d); /* pad the end of an animation by d units of time */
+Animation* pad_to(Animation* a, float d); /* pad the end of an animation to a total of d units of time */
 
 Animation* identity(Animation *a);          /* apply the identity transformation to an animation */
 Animation* sinusoid(Animation *a);          /* apply the sinusoid transformation to an animation */
