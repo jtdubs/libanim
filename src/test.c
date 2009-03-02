@@ -17,7 +17,7 @@ void test_null() {
 }
 
 void test_linearf_one_dimension_unit() {
-    float f, start = 0.0, end = 1.0;
+    float f=0.0, start = 0.0, end = 1.0;
     Animation* a = linearf(&f, 1, &start, &end);
     assert_float_equal(animation_duration(a), 1.0);
 
@@ -27,7 +27,7 @@ void test_linearf_one_dimension_unit() {
 }
 
 void test_linearf_one_dimension_range() {
-    float f, start = 10.0, end = 20.0;
+    float f=0.0, start = 10.0, end = 20.0;
     Animation* a = linearf(&f, 1, &start, &end);
     assert_float_equal(animation_duration(a), 1.0);
 
@@ -57,7 +57,7 @@ void test_linearf_three_dimensions_range() {
 }
 
 void test_sequence() {
-    float f, start1 = 0.0, end1 = 1.0, start2 = 1.0, end2 = 0.0;
+    float f=0.0, start1 = 0.0, end1 = 1.0, start2 = 1.0, end2 = 0.0;
     Animation* a = sequence(linearf(&f, 1, &start1, &end1), linearf(&f, 1, &start2, &end2));
     assert_float_equal(animation_duration(a), 2.0);
 
@@ -69,7 +69,7 @@ void test_sequence() {
 }
 
 void test_parallel() {
-    float f1, f2, start1 = 0.0, end1 = 1.0, start2 = 1.0, end2 = 0.0;
+    float f1=0.0, f2=0.0, start1 = 0.0, end1 = 1.0, start2 = 1.0, end2 = 0.0;
     Animation* a = parallel(linearf(&f1, 1, &start1, &end1), linearf(&f2, 1, &start2, &end2));
     assert_float_equal(animation_duration(a), 1.0);
 
@@ -79,7 +79,7 @@ void test_parallel() {
 }
 
 void test_scale_up() {
-    float f, start = 0.0, end = 1.0;
+    float f=0.0, start = 0.0, end = 1.0;
     Animation* a = scale(linearf(&f, 1, &start, &end), 5.0);
     assert_float_equal(animation_duration(a), 5.0);
 
@@ -92,7 +92,7 @@ void test_scale_up() {
 }
 
 void test_scale_down() {
-    float f, start = 0.0, end = 1.0;
+    float f=0.0, start = 0.0, end = 1.0;
     Animation* a = scale(linearf(&f, 1, &start, &end), 0.5);
     assert_float_equal(animation_duration(a), 0.5);
 
@@ -105,7 +105,7 @@ void test_scale_down() {
 }
 
 void test_identity() {
-    float f, start = 0.0, end = 1.0;
+    float f=0.0, start = 0.0, end = 1.0;
     Animation* a = identity(linearf(&f, 1, &start, &end));
     assert_float_equal(animation_duration(a), 1.0);
 
@@ -115,7 +115,7 @@ void test_identity() {
 }
 
 void test_sinusoid() {
-    float f, start = 0.0, end = 1.0;
+    float f=0.0, start = 0.0, end = 1.0;
     Animation* a = sinusoid(linearf(&f, 1, &start, &end));
     assert_float_equal(animation_duration(a), 1.0);
 
@@ -125,7 +125,7 @@ void test_sinusoid() {
 }
 
 void test_reverse() {
-    float f, start = 0.0, end = 1.0;
+    float f=0.0, start = 0.0, end = 1.0;
     Animation* a = reverse(linearf(&f, 1, &start, &end));
     assert_float_equal(animation_duration(a), 1.0);
 
@@ -135,7 +135,7 @@ void test_reverse() {
 }
 
 void test_exp() {
-    float f, start = 0.0, end = 1.0;
+    float f=0.0, start = 0.0, end = 1.0;
     Animation* a = exponent(linearf(&f, 1, &start, &end), 2.0);
     assert_float_equal(animation_duration(a), 1.0);
 
@@ -145,7 +145,7 @@ void test_exp() {
 }
 
 void test_delay() {
-    float f, start = 0.0, end = 1.0;
+    float f=0.0, start = 0.0, end = 1.0;
     Animation* a = delay(linearf(&f, 1, &start, &end), 1.0);
     assert_float_equal(animation_duration(a), 2.0);
 
@@ -157,7 +157,7 @@ void test_delay() {
 }
 
 void scenario_one() {
-	float x, y;
+	float x=0.0, y=0.0;
 	Animation* a = parallel(sequence(scale(linearf1(&x, 0, 3), 3), reverse(linearf1(&x, 1, 3))),
                             scale(linearf1(&y, 1, 5), 4));
 
