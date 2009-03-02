@@ -5,6 +5,18 @@
 #include <string.h>
 #include <stdlib.h>
 
+/* utilities */
+
+void assert_rangef(float x, float bottom, float top) {
+    g_assert_cmpfloat(x, >=, bottom);
+    g_assert_cmpfloat(x, <=, top);
+}
+
+void assert_rangei(int x, int bottom, int top) {
+    g_assert_cmpint(x, >=, bottom);
+    g_assert_cmpint(x, <=, top);
+}
+
 /* time transformations - modify the relationship between external time and animation time by transforming numbers in the range [0,1] */
 
 typedef float (*TimeTransformFunction)(TimeTransform*, float);
@@ -14,6 +26,8 @@ struct TimeTransformStruct {
 };
 
 float apply_transform(TimeTransform* t, float f) {
+    g_assert(t != NULL);
+    assert_rangef(f, 0.0, 1.0);
     return t->f(t, f);
 }
 
@@ -85,14 +99,19 @@ struct AnimationStruct {
 };
 
 void update_animation(Animation* a, float f) {
+    g_assert(a != NULL);
+    assert_rangef(f, 0.0, animation_duration(a));
+
     a->update(a, f);
 }
 
 float animation_duration(Animation* a) {
+    g_assert(a != NULL);
     return a->duration(a);
 }
 
 void free_animation(Animation* a) {
+    g_assert(a != NULL);
     a->free(a);
 }
 
@@ -147,6 +166,11 @@ void free_linear_animationf(Animation* a) {
 }
 
 Animation* linearf(float* v, int n, float* start, float* end) {
+    g_assert(v != NULL);
+    g_assert(start != NULL);
+    g_assert(end != NULL);
+    g_assert_cmpint(n, >, 0);
+
     LinearAnimationF* a = malloc(sizeof(LinearAnimationF));
     a->a.update   = update_linear_animationf;
     a->a.duration = default_animation_duration;
@@ -194,6 +218,11 @@ void free_linear_animationi(Animation* a) {
 }
 
 Animation* lineari(int* v, int n, int* start, int* end) {
+    g_assert(v != NULL);
+    g_assert(start != NULL);
+    g_assert(end != NULL);
+    g_assert_cmpint(n, >, 0);
+
     LinearAnimationI* a = malloc(sizeof(LinearAnimationI));
     a->a.update   = update_linear_animationi;
     a->a.duration = default_animation_duration;
@@ -258,6 +287,11 @@ void free_bezier_animationf(Animation* a) {
 }
 
 Animation* bezierf(float* v, int n, int m, float** control_points) {
+    g_assert(v != NULL);
+    g_assert(control_points != NULL);
+    g_assert_cmpint(n, >, 0);
+    g_assert_cmpint(m, >, 0);
+
     int i;
 
     BezierAnimationF* a = malloc(sizeof(BezierAnimationF));
@@ -300,10 +334,13 @@ float scaled_animation_duration(Animation* a) {
 }
 
 Animation* scale(Animation* a, float scale_factor) {
+    g_assert(a != NULL);
+    g_assert_cmpfloat(scale_factor, !=, 0);
+
     ScaledAnimation* s = malloc(sizeof(ScaledAnimation));
-    s->a.update    = update_scaled_animation;
-    s->a.duration  = scaled_animation_duration;
-    s->a.free      = free_scaled_animation;
+    s->a.update     = update_scaled_animation;
+    s->a.duration   = scaled_animation_duration;
+    s->a.free       = free_scaled_animation;
     s->child        = a;
     s->scale_factor = scale_factor;
     return (Animation*)s;
@@ -337,6 +374,9 @@ float transformed_animation_duration(Animation* a) {
 }
 
 Animation* transform(Animation* a, TimeTransform* t) {
+    g_assert(a != NULL);
+    g_assert(t != NULL);
+
     TransformedAnimation* ta = malloc(sizeof(TransformedAnimation));
     ta->a.update   = update_transformed_animation;
     ta->a.duration = transformed_animation_duration;
@@ -378,6 +418,9 @@ float sequence_animation_duration(Animation* a) {
 }
 
 Animation* sequence(Animation* a1, Animation* a2) {
+    g_assert(a1 != NULL);
+    g_assert(a2 != NULL);
+
     SequenceAnimation* a = malloc(sizeof(SequenceAnimation));
     a->a.update   = update_sequence_animation;
     a->a.duration = sequence_animation_duration;
@@ -414,6 +457,9 @@ float parallel_animation_duration(Animation* a) {
 }
 
 Animation* parallel(Animation* a1, Animation* a2) {
+    g_assert(a1 != NULL);
+    g_assert(a2 != NULL);
+
     ParallelAnimation* a = malloc(sizeof(ParallelAnimation));
     a->a.update   = update_parallel_animation;
     a->a.duration = parallel_animation_duration;
@@ -426,21 +472,27 @@ Animation* parallel(Animation* a1, Animation* a2) {
 /* higher-level operations */
 
 Animation* delay(Animation* a, float d) {
+    g_assert(a != NULL);
     return sequence(scale(null_animation(), d), a);
 }
 
 Animation* identity(Animation* a) {
+    g_assert(a != NULL);
     return transform(a, identity_transform());
 }
 
 Animation* sinusoid(Animation* a) {
+    g_assert(a != NULL);
     return transform(a, sinusoid_transform());
 }
 
 Animation* reverse(Animation* a) {
+    g_assert(a != NULL);
     return transform(a, reverse_transform());
 }
 
 Animation* exponent(Animation* a, float f) {
+    g_assert(a != NULL);
+    g_assert_cmpfloat(f, !=, 0.0);
     return transform(a, exponent_transform(f));
 }
