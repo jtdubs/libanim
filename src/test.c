@@ -120,7 +120,7 @@ void test_sinusoid() {
     assert_float_equal(animation_duration(a), 1.0);
 
     update_animation(a, 0.0); assert_float_equal(f, 0.0);
-    update_animation(a, 0.5); assert_float_equal(f, sin(G_PI_4));
+    update_animation(a, 0.5); assert_float_equal(f, 0.5);
     update_animation(a, 1.0); assert_float_equal(f, 1.0);
 }
 

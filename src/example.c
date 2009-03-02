@@ -6,8 +6,12 @@ float x=0, y=0, z=0;
 void show_animation(Animation* a, float step);
 
 int main() {
-    Animation* a = sinusoid(scale(linearf1(&x, 0, 1), 5));
-    show_animation(a, 0.1);
+    Animation* a = parallel(parallel(sequence(sinusoid(scale(linearf1(&x, 0, 4), 5)), sinusoid(scale(linearf1(&x, 4, 2), 3))),
+                                     sequence(delay(sinusoid(scale(linearf1(&y, 0, 4), 3)), 3), scale(holdf1(&y, 4), 2))),
+                            sequence(sequence(scale(linearf1(&z, 2, 1), 3),
+                                              scale(linearf1(&z, 1, 3), 3)),
+                                     scale(linearf1(&z, 3, 1), 2)));
+    show_animation(a, 0.02);
     return 0;
 }
 
@@ -19,5 +23,5 @@ void show_animation(Animation* a, float step) {
     }
 
     update_animation(a, d);
-    printf("%f %f %f %f\n", t, x, y, z);
+    printf("%f %f %f %f\n", d, x, y, z);
 }

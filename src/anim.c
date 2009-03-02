@@ -140,6 +140,24 @@ Animation* null_animation() {
     return (Animation*)a;
 }
 
+/* hold animation */
+
+Animation* holdf(float* v, int n, float* c) {
+    return linearf(v, 1, c, c);
+}
+
+Animation* holdi(int* v, int n, int* c) {
+    return lineari(v, 1, c, c);
+}
+
+Animation* holdf1(float* v, float c) {
+    return linearf1(v, c, c);
+}
+
+Animation* holdi1(int* v, int c) {
+    return lineari1(v, c, c);
+}
+
 /* linear animation (float) */
 
 typedef struct LinearAnimationFStruct {
@@ -459,6 +477,7 @@ float parallel_animation_duration(Animation* a) {
 Animation* parallel(Animation* a1, Animation* a2) {
     g_assert(a1 != NULL);
     g_assert(a2 != NULL);
+    g_assert_cmpfloat(animation_duration(a1), ==, animation_duration(a2));
 
     ParallelAnimation* a = malloc(sizeof(ParallelAnimation));
     a->a.update   = update_parallel_animation;

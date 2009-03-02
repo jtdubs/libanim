@@ -15,6 +15,12 @@ void  free_animation(Animation* a);
 
 Animation* null_animation(); /* the null animation does nothing */
 
+Animation* holdf(float* v, int n, float* c); /* hold v at the constant n-dimensional value c */
+Animation* holdi(int*   v, int n, int*   c); /* hold v at the constant n-dimensional value c */
+
+Animation* holdf1(float* v, float c); /* hold v at the constant value c */
+Animation* holdi1(int*   v, int   c); /* hold v at the constant value c */
+
 Animation* linearf(float* v, int n, float* start, float* end); /* animate n-dimensional point v from start to end */
 Animation* lineari(int*   v, int n, int*   start, int*   end); /* animate n-dimensional point v from start to end */
 
