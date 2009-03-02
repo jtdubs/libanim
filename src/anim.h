@@ -3,7 +3,7 @@
 
 /* Animations
  *
- * Animations change values over time.  All prmitive animations take 1 unit of time.
+ * Animations change values over time.  All primitive animations take 1 unit of time.
  */
 
 struct AnimationStruct;
@@ -40,7 +40,7 @@ struct TimeTransformStruct;
 typedef struct TimeTransformStruct TimeTransform;
 
 TimeTransform* identity_transform();       /* the identity transformation does not affect the speed of time */
-TimeTransform* sinusoid_transform();       /* time varies as the sin(x) for x in [0, PI/2], leading to animations that speed up then slow down */
+TimeTransform* sinusoid_transform();       /* time varies as the (sin(x)+1)/2 for x in [-PI/2, PI/2], leading to animations that speed up then slow down */
 TimeTransform* reverse_transform();        /* reverses time within an animation */
 TimeTransform* exponent_transform(float);  /* time varies as x^n leading to animations that accelerate (for n>1) or decellerate (for n<1) */
 
