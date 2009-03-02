@@ -23,8 +23,17 @@ void  update_animation(Animation* a, float f);
 float animation_duration(Animation* a);
 
 Animation* null_animation();
-Animation* linear_animationf(float* v, int n, float* start, float* end);
-Animation* linear_animationi(float* v, int n, float* start, float* end);
+
+Animation* linearf(float* v, int n, float* start, float* end);
+Animation* lineari(int*   v, int n, int*   start, int*   end);
+
+Animation* linearf1(float* v, float start, float end);
+Animation* lineari1(int*   v, int   start, int   end);
+
+Animation* bezierf(float* v, int n, int m, float** control_points);
+
+
+/* primitive modifiers */
 
 Animation* scale(Animation* a, float scale_factor);
 Animation* transform(Animation* a, TimeTransform* t);
@@ -32,8 +41,11 @@ Animation* transform(Animation* a, TimeTransform* t);
 Animation* sequence(Animation* a1, Animation* a2);
 Animation* parallel(Animation* a1, Animation* a2);
 
-/* higher-level operations */
+
+/* high-level modifiers */
 
 Animation* delay(Animation* a, float d);
+Animation* sinusoid(Animation *a);
+Animation* reverse(Animation *a);
 
 #endif

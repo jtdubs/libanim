@@ -1,0 +1,8 @@
+An animation modifies a value over time.
+
+The primitive animations (null, linear[fi] and spline) modify a value over the course of 1 unit of time.
+
+There are three ways to modify an animation:
+- Modify the rate that time passes within an animation (identity, sinusoid, exponent, reverse).
+- Modify the duration of an animation (scale)
+- Combine animations (sequence, parallel)

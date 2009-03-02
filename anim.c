@@ -2,6 +2,7 @@
 
 #include <glib.h>
 #include <math.h>
+#include <string.h>
 #include <stdlib.h>
 
 /* time transformations - modify the relationship between external time and animation time by transforming numbers in the range [0,1] */
@@ -113,10 +114,10 @@ Animation* null_animation() {
 
 typedef struct LinearAnimationFStruct {
     Animation a;
-    float *v;
+    float* v;
     int n;
-    float *start;
-    float *end;
+    float* start;
+    float* end;
 } LinearAnimationF;
 
 void update_linear_animationf(Animation* a, float f) {
@@ -127,7 +128,7 @@ void update_linear_animationf(Animation* a, float f) {
         la->v[i] = la->start[i] + (la->end[i] - la->start[i]) * f;
 }
 
-Animation* linear_animationf(float* v, int n, float* start, float* end) {
+Animation* linearf(float* v, int n, float* start, float* end) {
     LinearAnimationF* a = malloc(sizeof(LinearAnimationF));
     a->a.update   = update_linear_animationf;
     a->a.duration = default_animation_duration;
@@ -138,14 +139,24 @@ Animation* linear_animationf(float* v, int n, float* start, float* end) {
     return (Animation*)a;
 }
 
+Animation* linearf1(float* v, float start, float end) {
+    float* s = malloc(sizeof(float));
+    float* e = malloc(sizeof(float));
+
+    *s = start;
+    *e = end;
+
+    return linearf(v, 1, s, e);
+}
+
 /* linear animation (int) */
 
 typedef struct LinearAnimationIStruct {
     Animation a;
-    int *v;
+    int* v;
     int n;
-    int *start;
-    int *end;
+    int* start;
+    int* end;
 } LinearAnimationI;
 
 void update_linear_animationi(Animation* a, float f) {
@@ -157,14 +168,68 @@ void update_linear_animationi(Animation* a, float f) {
 }
 
 
-Animation* linear_animationi(float* v, int n, float* start, float* end) {
-    LinearAnimationF* a = malloc(sizeof(LinearAnimationI));
+Animation* lineari(int* v, int n, int* start, int* end) {
+    LinearAnimationI* a = malloc(sizeof(LinearAnimationI));
     a->a.update   = update_linear_animationi;
     a->a.duration = default_animation_duration;
     a->v     = v;
     a->n     = n;
     a->start = start;
     a->end   = end;
+    return (Animation*)a;
+}
+
+Animation* lineari1(int* v, int start, int end) {
+    int* s = malloc(sizeof(int));
+    int* e = malloc(sizeof(int));
+
+    *s = start;
+    *e = end;
+
+    return lineari(v, 1, s, e);
+}
+
+/* bezier animation (float) */
+
+typedef struct BezierAnimationFStruct {
+    Animation a;
+    float* v;
+    int n;
+    int m;
+    float** control_points;
+    float** working_storage;
+} BezierAnimationF;
+
+void update_bezier_animationf(Animation* a, float f) {
+    int i, j, k;
+
+    BezierAnimationF* s = (BezierAnimationF*)a;
+
+    for (i=0; i<s->m; i++)
+        memcpy(s->working_storage[i], s->control_points[i], sizeof(float)*s->n);
+
+    for (i=s->m-1; i>=1; i--)
+        for (j=0; j<i; j++)
+            for (k=0; k<s->n; k++)
+                s->working_storage[j][k] = s->working_storage[j][k] + (s->working_storage[j+1][k] - s->working_storage[j][k]) * f;
+
+    memcpy(s->v, s->working_storage[0], sizeof(float)*s->n);
+}
+
+Animation* bezierf(float* v, int n, int m, float** control_points) {
+    int i;
+
+    BezierAnimationF* a = malloc(sizeof(BezierAnimationF));
+    a->a.update   = update_bezier_animationf;
+    a->a.duration = default_animation_duration;
+    a->v               = v;
+    a->n               = n;
+    a->m               = m;
+    a->control_points  = control_points;
+    a->working_storage = malloc(sizeof(float*) * m);
+    for (i=0; i<m; i++)
+        a->working_storage[i] = malloc(sizeof(float) * n);
+
     return (Animation*)a;
 }
 
@@ -190,6 +255,7 @@ Animation* scale(Animation* a, float scale_factor) {
     ScaledAnimation* s = malloc(sizeof(ScaledAnimation));
     s->a.update    = update_scaled_animation;
     s->a.duration  = scaled_animation_duration;
+    s->child        = a;
     s->scale_factor = scale_factor;
     return (Animation*)s;
 }
@@ -206,7 +272,7 @@ void update_transformed_animation(Animation* a, float f) {
     TransformedAnimation* ta = (TransformedAnimation*)a;
 
     float d = animation_duration(ta->child);
-    update_animation(ta->child, apply_transformation(ta->t, f / d) * d);
+    update_animation(ta->child, apply_transform(ta->t, f / d) * d);
 }
 
 float transformed_animation_duration(Animation* a) {
@@ -288,4 +354,12 @@ Animation* parallel(Animation* a1, Animation* a2) {
 
 Animation* delay(Animation* a, float d) {
     return sequence(scale(null_animation(), d), a);
+}
+
+Animation* sinusoid(Animation* a) {
+    return transform(a, sinusoid_transform());
+}
+
+Animation* reverse(Animation* a) {
+    return transform(a, reverse_transform());
 }
