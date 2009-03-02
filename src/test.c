@@ -120,7 +120,7 @@ void test_sinusoid() {
     g_assert(animation_duration(a) == 1.0);
 
     update_animation(a, 0.0); assert_float_equal(f, 0.0);
-    update_animation(a, 0.5); assert_float_equal(f, sinf(G_PI_4));
+    update_animation(a, 0.5); assert_float_equal(f, sin(G_PI_4));
     update_animation(a, 1.0); assert_float_equal(f, 1.0);
 }
 
@@ -140,7 +140,7 @@ void test_exp() {
     g_assert(animation_duration(a) == 1.0);
 
     update_animation(a, 0.0); assert_float_equal(f, 0.0);
-    update_animation(a, 0.5); assert_float_equal(f, powf(0.5, 2.0));
+    update_animation(a, 0.5); assert_float_equal(f, pow(0.5, 2.0));
     update_animation(a, 1.0); assert_float_equal(f, 1.0);
 }
 
@@ -257,4 +257,6 @@ int main(int argc, char** argv) {
     g_test_add_func("/libanim/transform/exp", test_exp);
     g_test_add_func("/libanim/scenario", scenario_one);
 	g_test_run();
+
+	return 0;
 }
