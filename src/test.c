@@ -10,10 +10,10 @@ void assert_float_equal(float f1, float f2) {
 
 void test_null() {
     Animation* a = null_animation();
-    update_animation(a, 0.0);
-    update_animation(a, 1.0);
+    animation_update(a, 0.0);
+    animation_update(a, 1.0);
     assert_float_equal(animation_duration(a), 1.0);
-    free_animation(a);
+    animation_free(a);
 }
 
 void test_linearf_one_dimension_unit() {
@@ -21,9 +21,9 @@ void test_linearf_one_dimension_unit() {
     Animation* a = linearf(&f, 1, &start, &end);
     assert_float_equal(animation_duration(a), 1.0);
 
-    update_animation(a, 0.0); assert_float_equal(f, 0.0);
-    update_animation(a, 0.5); assert_float_equal(f, 0.5);
-    update_animation(a, 1.0); assert_float_equal(f, 1.0);
+    animation_update(a, 0.0); assert_float_equal(f, 0.0);
+    animation_update(a, 0.5); assert_float_equal(f, 0.5);
+    animation_update(a, 1.0); assert_float_equal(f, 1.0);
 }
 
 void test_linearf_one_dimension_range() {
@@ -31,9 +31,9 @@ void test_linearf_one_dimension_range() {
     Animation* a = linearf(&f, 1, &start, &end);
     assert_float_equal(animation_duration(a), 1.0);
 
-    update_animation(a, 0.0); assert_float_equal(f, 10.0);
-    update_animation(a, 0.5); assert_float_equal(f, 15.0);
-    update_animation(a, 1.0); assert_float_equal(f, 20.0);
+    animation_update(a, 0.0); assert_float_equal(f, 10.0);
+    animation_update(a, 0.5); assert_float_equal(f, 15.0);
+    animation_update(a, 1.0); assert_float_equal(f, 20.0);
 }
 
 void test_linearf_three_dimensions_unit() {
@@ -41,9 +41,9 @@ void test_linearf_three_dimensions_unit() {
     Animation* a = linearf(f, 3, start, end);
     assert_float_equal(animation_duration(a), 1.0);
 
-    update_animation(a, 0.0); assert_float_equal(f[0], 0.0); assert_float_equal(f[1], 0.0); assert_float_equal(f[2], 0.0);
-    update_animation(a, 0.5); assert_float_equal(f[0], 0.5); assert_float_equal(f[1], 0.5); assert_float_equal(f[2], 0.5);
-    update_animation(a, 1.0); assert_float_equal(f[0], 1.0); assert_float_equal(f[1], 1.0); assert_float_equal(f[2], 1.0);
+    animation_update(a, 0.0); assert_float_equal(f[0], 0.0); assert_float_equal(f[1], 0.0); assert_float_equal(f[2], 0.0);
+    animation_update(a, 0.5); assert_float_equal(f[0], 0.5); assert_float_equal(f[1], 0.5); assert_float_equal(f[2], 0.5);
+    animation_update(a, 1.0); assert_float_equal(f[0], 1.0); assert_float_equal(f[1], 1.0); assert_float_equal(f[2], 1.0);
 }
 
 void test_linearf_three_dimensions_range() {
@@ -51,9 +51,9 @@ void test_linearf_three_dimensions_range() {
     Animation* a = linearf(f, 3, start, end);
     assert_float_equal(animation_duration(a), 1.0);
 
-    update_animation(a, 0.0); assert_float_equal(f[0], 10.0); assert_float_equal(f[1], 11.0); assert_float_equal(f[2], 12.0);
-    update_animation(a, 0.5); assert_float_equal(f[0], 15.0); assert_float_equal(f[1], 16.0); assert_float_equal(f[2], 17.0);
-    update_animation(a, 1.0); assert_float_equal(f[0], 20.0); assert_float_equal(f[1], 21.0); assert_float_equal(f[2], 22.0);
+    animation_update(a, 0.0); assert_float_equal(f[0], 10.0); assert_float_equal(f[1], 11.0); assert_float_equal(f[2], 12.0);
+    animation_update(a, 0.5); assert_float_equal(f[0], 15.0); assert_float_equal(f[1], 16.0); assert_float_equal(f[2], 17.0);
+    animation_update(a, 1.0); assert_float_equal(f[0], 20.0); assert_float_equal(f[1], 21.0); assert_float_equal(f[2], 22.0);
 }
 
 void test_sequence() {
@@ -61,11 +61,11 @@ void test_sequence() {
     Animation* a = sequence(linearf(&f, 1, &start1, &end1), linearf(&f, 1, &start2, &end2));
     assert_float_equal(animation_duration(a), 2.0);
 
-    update_animation(a, 0.0); assert_float_equal(f, 0.0);
-    update_animation(a, 0.5); assert_float_equal(f, 0.5);
-    update_animation(a, 1.0); assert_float_equal(f, 1.0);
-    update_animation(a, 1.5); assert_float_equal(f, 0.5);
-    update_animation(a, 2.0); assert_float_equal(f, 0.0);
+    animation_update(a, 0.0); assert_float_equal(f, 0.0);
+    animation_update(a, 0.5); assert_float_equal(f, 0.5);
+    animation_update(a, 1.0); assert_float_equal(f, 1.0);
+    animation_update(a, 1.5); assert_float_equal(f, 0.5);
+    animation_update(a, 2.0); assert_float_equal(f, 0.0);
 }
 
 void test_parallel() {
@@ -73,9 +73,9 @@ void test_parallel() {
     Animation* a = parallel(linearf(&f1, 1, &start1, &end1), linearf(&f2, 1, &start2, &end2));
     assert_float_equal(animation_duration(a), 1.0);
 
-    update_animation(a, 0.0); assert_float_equal(f1, 0.0); assert_float_equal(f2, 1.0);
-    update_animation(a, 0.5); assert_float_equal(f1, 0.5); assert_float_equal(f2, 0.5);
-    update_animation(a, 1.0); assert_float_equal(f1, 1.0); assert_float_equal(f2, 0.0);
+    animation_update(a, 0.0); assert_float_equal(f1, 0.0); assert_float_equal(f2, 1.0);
+    animation_update(a, 0.5); assert_float_equal(f1, 0.5); assert_float_equal(f2, 0.5);
+    animation_update(a, 1.0); assert_float_equal(f1, 1.0); assert_float_equal(f2, 0.0);
 }
 
 void test_scale_up() {
@@ -83,12 +83,12 @@ void test_scale_up() {
     Animation* a = scale(linearf(&f, 1, &start, &end), 5.0);
     assert_float_equal(animation_duration(a), 5.0);
 
-    update_animation(a, 0.0); assert_float_equal(f, 0.0);
-    update_animation(a, 1.0); assert_float_equal(f, 0.2);
-    update_animation(a, 2.0); assert_float_equal(f, 0.4);
-    update_animation(a, 3.0); assert_float_equal(f, 0.6);
-    update_animation(a, 4.0); assert_float_equal(f, 0.8);
-    update_animation(a, 5.0); assert_float_equal(f, 1.0);
+    animation_update(a, 0.0); assert_float_equal(f, 0.0);
+    animation_update(a, 1.0); assert_float_equal(f, 0.2);
+    animation_update(a, 2.0); assert_float_equal(f, 0.4);
+    animation_update(a, 3.0); assert_float_equal(f, 0.6);
+    animation_update(a, 4.0); assert_float_equal(f, 0.8);
+    animation_update(a, 5.0); assert_float_equal(f, 1.0);
 }
 
 void test_scale_down() {
@@ -96,12 +96,12 @@ void test_scale_down() {
     Animation* a = scale(linearf(&f, 1, &start, &end), 0.5);
     assert_float_equal(animation_duration(a), 0.5);
 
-    update_animation(a, 0.0); assert_float_equal(f, 0.0);
-    update_animation(a, 0.1); assert_float_equal(f, 0.2);
-    update_animation(a, 0.2); assert_float_equal(f, 0.4);
-    update_animation(a, 0.3); assert_float_equal(f, 0.6);
-    update_animation(a, 0.4); assert_float_equal(f, 0.8);
-    update_animation(a, 0.5); assert_float_equal(f, 1.0);
+    animation_update(a, 0.0); assert_float_equal(f, 0.0);
+    animation_update(a, 0.1); assert_float_equal(f, 0.2);
+    animation_update(a, 0.2); assert_float_equal(f, 0.4);
+    animation_update(a, 0.3); assert_float_equal(f, 0.6);
+    animation_update(a, 0.4); assert_float_equal(f, 0.8);
+    animation_update(a, 0.5); assert_float_equal(f, 1.0);
 }
 
 void test_identity() {
@@ -109,9 +109,9 @@ void test_identity() {
     Animation* a = identity(linearf(&f, 1, &start, &end));
     assert_float_equal(animation_duration(a), 1.0);
 
-    update_animation(a, 0.0); assert_float_equal(f, 0.0);
-    update_animation(a, 0.5); assert_float_equal(f, 0.5);
-    update_animation(a, 1.0); assert_float_equal(f, 1.0);
+    animation_update(a, 0.0); assert_float_equal(f, 0.0);
+    animation_update(a, 0.5); assert_float_equal(f, 0.5);
+    animation_update(a, 1.0); assert_float_equal(f, 1.0);
 }
 
 void test_sinusoid() {
@@ -119,9 +119,9 @@ void test_sinusoid() {
     Animation* a = sinusoid(linearf(&f, 1, &start, &end));
     assert_float_equal(animation_duration(a), 1.0);
 
-    update_animation(a, 0.0); assert_float_equal(f, 0.0);
-    update_animation(a, 0.5); assert_float_equal(f, 0.5);
-    update_animation(a, 1.0); assert_float_equal(f, 1.0);
+    animation_update(a, 0.0); assert_float_equal(f, 0.0);
+    animation_update(a, 0.5); assert_float_equal(f, 0.5);
+    animation_update(a, 1.0); assert_float_equal(f, 1.0);
 }
 
 void test_reverse() {
@@ -129,9 +129,9 @@ void test_reverse() {
     Animation* a = reverse(linearf(&f, 1, &start, &end));
     assert_float_equal(animation_duration(a), 1.0);
 
-    update_animation(a, 0.0); assert_float_equal(f, 1.0);
-    update_animation(a, 0.5); assert_float_equal(f, 0.5);
-    update_animation(a, 1.0); assert_float_equal(f, 0.0);
+    animation_update(a, 0.0); assert_float_equal(f, 1.0);
+    animation_update(a, 0.5); assert_float_equal(f, 0.5);
+    animation_update(a, 1.0); assert_float_equal(f, 0.0);
 }
 
 void test_exp() {
@@ -139,9 +139,9 @@ void test_exp() {
     Animation* a = exponent(linearf(&f, 1, &start, &end), 2.0);
     assert_float_equal(animation_duration(a), 1.0);
 
-    update_animation(a, 0.0); assert_float_equal(f, 0.0);
-    update_animation(a, 0.5); assert_float_equal(f, pow(0.5, 2.0));
-    update_animation(a, 1.0); assert_float_equal(f, 1.0);
+    animation_update(a, 0.0); assert_float_equal(f, 0.0);
+    animation_update(a, 0.5); assert_float_equal(f, pow(0.5, 2.0));
+    animation_update(a, 1.0); assert_float_equal(f, 1.0);
 }
 
 void test_delay() {
@@ -149,11 +149,11 @@ void test_delay() {
     Animation* a = delay(linearf(&f, 1, &start, &end), 1.0);
     assert_float_equal(animation_duration(a), 2.0);
 
-    update_animation(a, 0.0); assert_float_equal(f, 0.0);
-    update_animation(a, 0.5); assert_float_equal(f, 0.0);
-    update_animation(a, 1.0); assert_float_equal(f, 0.0);
-    update_animation(a, 1.5); assert_float_equal(f, 0.5);
-    update_animation(a, 2.0); assert_float_equal(f, 1.0);
+    animation_update(a, 0.0); assert_float_equal(f, 0.0);
+    animation_update(a, 0.5); assert_float_equal(f, 0.0);
+    animation_update(a, 1.0); assert_float_equal(f, 0.0);
+    animation_update(a, 1.5); assert_float_equal(f, 0.5);
+    animation_update(a, 2.0); assert_float_equal(f, 1.0);
 }
 
 void scenario_one() {
@@ -161,17 +161,17 @@ void scenario_one() {
 	Animation* a = parallel(sequence(scale(linearf1(&x, 0, 3), 3), reverse(linearf1(&x, 1, 3))),
                             scale(linearf1(&y, 1, 5), 4));
 
-    update_animation(a, 0.0); assert_float_equal(x, 0.0); assert_float_equal(y, 1.0);
-    update_animation(a, 0.5); assert_float_equal(x, 0.5); assert_float_equal(y, 1.5);
-    update_animation(a, 1.0); assert_float_equal(x, 1.0); assert_float_equal(y, 2.0);
-    update_animation(a, 1.5); assert_float_equal(x, 1.5); assert_float_equal(y, 2.5);
-    update_animation(a, 2.0); assert_float_equal(x, 2.0); assert_float_equal(y, 3.0);
-    update_animation(a, 2.5); assert_float_equal(x, 2.5); assert_float_equal(y, 3.5);
-    update_animation(a, 3.0); assert_float_equal(x, 3.0); assert_float_equal(y, 4.0);
-    update_animation(a, 3.5); assert_float_equal(x, 2.0); assert_float_equal(y, 4.5);
-    update_animation(a, 4.0); assert_float_equal(x, 1.0); assert_float_equal(y, 5.0);
+    animation_update(a, 0.0); assert_float_equal(x, 0.0); assert_float_equal(y, 1.0);
+    animation_update(a, 0.5); assert_float_equal(x, 0.5); assert_float_equal(y, 1.5);
+    animation_update(a, 1.0); assert_float_equal(x, 1.0); assert_float_equal(y, 2.0);
+    animation_update(a, 1.5); assert_float_equal(x, 1.5); assert_float_equal(y, 2.5);
+    animation_update(a, 2.0); assert_float_equal(x, 2.0); assert_float_equal(y, 3.0);
+    animation_update(a, 2.5); assert_float_equal(x, 2.5); assert_float_equal(y, 3.5);
+    animation_update(a, 3.0); assert_float_equal(x, 3.0); assert_float_equal(y, 4.0);
+    animation_update(a, 3.5); assert_float_equal(x, 2.0); assert_float_equal(y, 4.5);
+    animation_update(a, 4.0); assert_float_equal(x, 1.0); assert_float_equal(y, 5.0);
 
-    free_animation(a);
+    animation_free(a);
 }
 
 void test_bezier_one_dimension_one() {
@@ -187,11 +187,11 @@ void test_bezier_one_dimension_one() {
 
     Animation* a = bezierf(&v, 1, 2, c);
 
-    update_animation(a, 0.0); assert_float_equal(v, 0.0);
-    update_animation(a, 0.5); assert_float_equal(v, 0.5);
-    update_animation(a, 1.0); assert_float_equal(v, 1.0);
+    animation_update(a, 0.0); assert_float_equal(v, 0.0);
+    animation_update(a, 0.5); assert_float_equal(v, 0.5);
+    animation_update(a, 1.0); assert_float_equal(v, 1.0);
 
-    free_animation(a);
+    animation_free(a);
 }
 
 void test_bezier_one_dimension_two() {
@@ -208,11 +208,11 @@ void test_bezier_one_dimension_two() {
 
     Animation* a = bezierf(&v, 1, 3, c);
 
-    update_animation(a, 0.0); assert_float_equal(v, 0.0);
-    update_animation(a, 0.5); assert_float_equal(v, 0.5);
-    update_animation(a, 1.0); assert_float_equal(v, 0.0);
+    animation_update(a, 0.0); assert_float_equal(v, 0.0);
+    animation_update(a, 0.5); assert_float_equal(v, 0.5);
+    animation_update(a, 1.0); assert_float_equal(v, 0.0);
 
-    free_animation(a);
+    animation_free(a);
 }
 
 void test_bezier_three_dimension_one() {
@@ -229,11 +229,11 @@ void test_bezier_three_dimension_one() {
 
     Animation* a = bezierf(v, 3, 3, c);
 
-    update_animation(a, 0.0); assert_float_equal(v[0], 0.0); assert_float_equal(v[1], 0.0); assert_float_equal(v[2], 0.0);
-    update_animation(a, 0.5); assert_float_equal(v[0], 0.5); assert_float_equal(v[1], 1.0); assert_float_equal(v[2], 1.5);
-    update_animation(a, 1.0); assert_float_equal(v[0], 0.0); assert_float_equal(v[1], 0.0); assert_float_equal(v[2], 0.0);
+    animation_update(a, 0.0); assert_float_equal(v[0], 0.0); assert_float_equal(v[1], 0.0); assert_float_equal(v[2], 0.0);
+    animation_update(a, 0.5); assert_float_equal(v[0], 0.5); assert_float_equal(v[1], 1.0); assert_float_equal(v[2], 1.5);
+    animation_update(a, 1.0); assert_float_equal(v[0], 0.0); assert_float_equal(v[1], 0.0); assert_float_equal(v[2], 0.0);
 
-    free_animation(a);
+    animation_free(a);
 }
 
 int main(int argc, char** argv) {

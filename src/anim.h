@@ -11,9 +11,9 @@
 struct AnimationStruct;
 typedef struct AnimationStruct Animation;
 
-void  update_animation(Animation* a, float time);
+void  animation_update(Animation* a, float time);
 float animation_duration(Animation* a);
-void  free_animation(Animation* a);
+void  animation_free(Animation* a);
 
 Animation* null_animation(); /* the null animation does nothing */
 
@@ -88,9 +88,9 @@ Animation* exponent(Animation* a, float f); /* apply the exponent transformation
 struct AnimationRunnerStruct;
 typedef struct AnimationRunnerStruct AnimationRunner;
 
-AnimationRunner* animation_runner(Animation* a);             /* create a runner for an animation */
-void animation_runner_start(AnimationRunner* runner);        /* start the animation at the current time */
-gboolean animation_runner_update(AnimationRunner* runner);   /* update based on the current time.  returns TRUE if more animation remains. */
-void animation_runner_free(AnimationRunner* runner);         /* free the runner and its animation */
+AnimationRunner* animation_runner(Animation*);              /* create a runner for an animation */
+void             animation_runner_start(AnimationRunner*);  /* start the animation at the current time */
+gboolean         animation_runner_update(AnimationRunner*); /* update based on the current time.  returns TRUE if more animation remains. */
+void             animation_runner_free(AnimationRunner*);   /* free the runner and its animation */
 
 #endif

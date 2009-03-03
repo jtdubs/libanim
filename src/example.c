@@ -23,10 +23,10 @@ int main() {
 void show_animation(Animation* a, float step) {
     float t, d = animation_duration(a);
     for (t=0.0; t<d; t+=step) {
-        update_animation(a, t);
+        animation_update(a, t);
         printf("%f %f %f %f\n", t, x, y, z);
     }
 
-    update_animation(a, d);
+    animation_update(a, d);
     printf("%f %f %f %f\n", d, x, y, z);
 }

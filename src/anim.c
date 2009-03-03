@@ -45,16 +45,16 @@ gboolean animation_runner_update(AnimationRunner* r) {
     float t = ((float)(now.tv_sec - r->start_time.tv_sec)) + (((float)(now.tv_usec - r->start_time.tv_usec)) / (float)G_USEC_PER_SEC);
 
     if (t < r->duration) {
-        update_animation(r->animation, t);
+        animation_update(r->animation, t);
         return TRUE;
     } else {
-        update_animation(r->animation, r->duration);
+        animation_update(r->animation, r->duration);
         return FALSE;
     }
 }
 
 void animation_runner_free(AnimationRunner* r) {
-    free_animation(r->animation);
+    animation_free(r->animation);
     free(r);
 }
 
@@ -139,7 +139,7 @@ struct AnimationStruct {
     FreeAnimationFunction free;
 };
 
-void update_animation(Animation* a, float f) {
+void animation_update(Animation* a, float f) {
     g_assert(a != NULL);
     assert_rangef(f, 0.0, animation_duration(a));
 
@@ -151,7 +151,7 @@ float animation_duration(Animation* a) {
     return a->duration(a);
 }
 
-void free_animation(Animation* a) {
+void animation_free(Animation* a) {
     g_assert(a != NULL);
     a->free(a);
 }
@@ -160,7 +160,7 @@ float default_animation_duration(Animation* a) {
     return 1.0;
 }
 
-void default_free_animation(Animation* a) {
+void default_animation_free(Animation* a) {
     free(a);
 }
 
@@ -170,14 +170,14 @@ typedef struct NullAnimationStruct {
     Animation a;
 } NullAnimation;
 
-void update_null_animation(Animation* a, float f) {
+void null_animation_update(Animation* a, float f) {
 }
 
 Animation* null_animation() {
     NullAnimation* a = malloc(sizeof(NullAnimation));
-    a->a.update   = update_null_animation;
+    a->a.update   = null_animation_update;
     a->a.duration = default_animation_duration;
-    a->a.free     = default_free_animation;
+    a->a.free     = default_animation_free;
     return (Animation*)a;
 }
 
@@ -209,7 +209,7 @@ typedef struct LinearAnimationFStruct {
     float* end;
 } LinearAnimationF;
 
-void update_linear_animationf(Animation* a, float f) {
+void linear_animationf_update(Animation* a, float f) {
     LinearAnimationF* la = (LinearAnimationF*)a;
 
     int i;
@@ -217,11 +217,11 @@ void update_linear_animationf(Animation* a, float f) {
         la->v[i] = la->start[i] + (la->end[i] - la->start[i]) * f;
 }
 
-void free_linear_animationf(Animation* a) {
+void linear_animationf_free(Animation* a) {
     LinearAnimationF* la = (LinearAnimationF*)a;
     free(la->start);
     free(la->end);
-    default_free_animation(a);
+    default_animation_free(a);
 }
 
 Animation* linearf(float* v, int n, float* start, float* end) {
@@ -231,9 +231,9 @@ Animation* linearf(float* v, int n, float* start, float* end) {
     g_assert_cmpint(n, >, 0);
 
     LinearAnimationF* a = malloc(sizeof(LinearAnimationF));
-    a->a.update   = update_linear_animationf;
+    a->a.update   = linear_animationf_update;
     a->a.duration = default_animation_duration;
-    a->a.free     = free_linear_animationf;
+    a->a.free     = linear_animationf_free;
     a->v     = v;
     a->n     = n;
     a->start = start;
@@ -261,7 +261,7 @@ typedef struct LinearAnimationIStruct {
     int* end;
 } LinearAnimationI;
 
-void update_linear_animationi(Animation* a, float f) {
+void linear_animationi_update(Animation* a, float f) {
     LinearAnimationI* la = (LinearAnimationI*)a;
 
     int i;
@@ -269,11 +269,11 @@ void update_linear_animationi(Animation* a, float f) {
         la->v[i] = la->start[i] + (la->end[i] - la->start[i]) * f;
 }
 
-void free_linear_animationi(Animation* a) {
+void linear_animationi_free(Animation* a) {
     LinearAnimationI* la = (LinearAnimationI*)a;
     free(la->start);
     free(la->end);
-    default_free_animation(a);
+    default_animation_free(a);
 }
 
 Animation* lineari(int* v, int n, int* start, int* end) {
@@ -283,9 +283,9 @@ Animation* lineari(int* v, int n, int* start, int* end) {
     g_assert_cmpint(n, >, 0);
 
     LinearAnimationI* a = malloc(sizeof(LinearAnimationI));
-    a->a.update   = update_linear_animationi;
+    a->a.update   = linear_animationi_update;
     a->a.duration = default_animation_duration;
-    a->a.free     = free_linear_animationi;
+    a->a.free     = linear_animationi_free;
     a->v     = v;
     a->n     = n;
     a->start = start;
@@ -314,7 +314,7 @@ typedef struct BezierAnimationFStruct {
     float** working_storage;
 } BezierAnimationF;
 
-void update_bezier_animationf(Animation* a, float f) {
+void bezier_animationf_update(Animation* a, float f) {
     BezierAnimationF* s = (BezierAnimationF*)a;
 
     int i;
@@ -330,7 +330,7 @@ void update_bezier_animationf(Animation* a, float f) {
     memcpy(s->v, s->working_storage[0], sizeof(float)*s->n);
 }
 
-void free_bezier_animationf(Animation* a) {
+void bezier_animationf_free(Animation* a) {
     BezierAnimationF* s = (BezierAnimationF*)a;
 
     int i;
@@ -342,7 +342,7 @@ void free_bezier_animationf(Animation* a) {
     free(s->control_points);
     free(s->working_storage);
 
-    default_free_animation(a);
+    default_animation_free(a);
 }
 
 Animation* bezierf(float* v, int n, int m, float** control_points) {
@@ -354,9 +354,9 @@ Animation* bezierf(float* v, int n, int m, float** control_points) {
     int i;
 
     BezierAnimationF* a = malloc(sizeof(BezierAnimationF));
-    a->a.update   = update_bezier_animationf;
+    a->a.update   = bezier_animationf_update;
     a->a.duration = default_animation_duration;
-    a->a.free     = free_bezier_animationf;
+    a->a.free     = bezier_animationf_free;
     a->v               = v;
     a->n               = n;
     a->m               = m;
@@ -376,15 +376,15 @@ typedef struct ScaledAnimationStruct {
     float scale_factor;
 } ScaledAnimation;
 
-void update_scaled_animation(Animation* a, float f) {
+void scaled_animation_update(Animation* a, float f) {
     ScaledAnimation* sa = (ScaledAnimation*)a;
-    update_animation(sa->child, f / sa->scale_factor);
+    animation_update(sa->child, f / sa->scale_factor);
 }
 
-void free_scaled_animation(Animation* a) {
+void scaled_animation_free(Animation* a) {
     ScaledAnimation* sa = (ScaledAnimation*)a;
-    free_animation(sa->child);
-    default_free_animation(a);
+    animation_free(sa->child);
+    default_animation_free(a);
 }
 
 float scaled_animation_duration(Animation* a) {
@@ -397,9 +397,9 @@ Animation* scale(Animation* a, float scale_factor) {
     g_assert_cmpfloat(scale_factor, !=, 0);
 
     ScaledAnimation* s = malloc(sizeof(ScaledAnimation));
-    s->a.update     = update_scaled_animation;
+    s->a.update     = scaled_animation_update;
     s->a.duration   = scaled_animation_duration;
-    s->a.free       = free_scaled_animation;
+    s->a.free       = scaled_animation_free;
     s->child        = a;
     s->scale_factor = scale_factor;
     return (Animation*)s;
@@ -413,18 +413,18 @@ typedef struct TransformedAnimationStruct {
     TimeTransform* t;
 } TransformedAnimation;
 
-void update_transformed_animation(Animation* a, float f) {
+void transformed_animation_update(Animation* a, float f) {
     TransformedAnimation* ta = (TransformedAnimation*)a;
 
     float d = animation_duration(ta->child);
-    update_animation(ta->child, apply_transform(ta->t, f / d) * d);
+    animation_update(ta->child, apply_transform(ta->t, f / d) * d);
 }
 
-void free_transformed_animation(Animation* a) {
+void transformed_animation_free(Animation* a) {
     TransformedAnimation* ta = (TransformedAnimation*)a;
-    free_animation(ta->child);
+    animation_free(ta->child);
     free(ta->t);
-    default_free_animation(a);
+    default_animation_free(a);
 }
 
 float transformed_animation_duration(Animation* a) {
@@ -437,9 +437,9 @@ Animation* transform(Animation* a, TimeTransform* t) {
     g_assert(t != NULL);
 
     TransformedAnimation* ta = malloc(sizeof(TransformedAnimation));
-    ta->a.update   = update_transformed_animation;
+    ta->a.update   = transformed_animation_update;
     ta->a.duration = transformed_animation_duration;
-    ta->a.free     = free_transformed_animation;
+    ta->a.free     = transformed_animation_free;
     ta->child = a;
     ta->t     = t;
     return (Animation*)ta;
@@ -453,22 +453,22 @@ typedef struct SequenceAnimationStruct {
     Animation* a2;
 } SequenceAnimation;
 
-void update_sequence_animation(Animation* a, float f) {
+void sequence_animation_update(Animation* a, float f) {
     SequenceAnimation* as = (SequenceAnimation*)a;
 
     float d = animation_duration(as->a1);
 
     if (f <= d)
-        update_animation(as->a1, f);
+        animation_update(as->a1, f);
     else
-        update_animation(as->a2, f-d);
+        animation_update(as->a2, f-d);
 }
 
-void free_sequence_animation(Animation* a) {
+void sequence_animation_free(Animation* a) {
     SequenceAnimation* as = (SequenceAnimation*)a;
-    free_animation(as->a1);
-    free_animation(as->a2);
-    default_free_animation(a);
+    animation_free(as->a1);
+    animation_free(as->a2);
+    default_animation_free(a);
 }
 
 float sequence_animation_duration(Animation* a) {
@@ -481,9 +481,9 @@ Animation* sequence(Animation* a1, Animation* a2) {
     g_assert(a2 != NULL);
 
     SequenceAnimation* a = malloc(sizeof(SequenceAnimation));
-    a->a.update   = update_sequence_animation;
+    a->a.update   = sequence_animation_update;
     a->a.duration = sequence_animation_duration;
-    a->a.free     = free_sequence_animation;
+    a->a.free     = sequence_animation_free;
     a->a1 = a1;
     a->a2 = a2;
     return (Animation*)a;
@@ -512,17 +512,17 @@ typedef struct ParallelAnimationStruct {
     Animation* a2;
 } ParallelAnimation;
 
-void update_parallel_animation(Animation* a, float f) {
+void parallel_animation_update(Animation* a, float f) {
     ParallelAnimation* as = (ParallelAnimation*)a;
-    update_animation(as->a1, f);
-    update_animation(as->a2, f);
+    animation_update(as->a1, f);
+    animation_update(as->a2, f);
 }
 
-void free_parallel_animation(Animation* a) {
+void parallel_animation_free(Animation* a) {
     ParallelAnimation* as = (ParallelAnimation*)a;
-    free_animation(as->a1);
-    free_animation(as->a2);
-    default_free_animation(a);
+    animation_free(as->a1);
+    animation_free(as->a2);
+    default_animation_free(a);
 }
 
 float parallel_animation_duration(Animation* a) {
@@ -536,9 +536,9 @@ Animation* parallel(Animation* a1, Animation* a2) {
     g_assert_cmpfloat(animation_duration(a1), ==, animation_duration(a2));
 
     ParallelAnimation* a = malloc(sizeof(ParallelAnimation));
-    a->a.update   = update_parallel_animation;
+    a->a.update   = parallel_animation_update;
     a->a.duration = parallel_animation_duration;
-    a->a.free     = free_parallel_animation;
+    a->a.free     = parallel_animation_free;
     a->a1 = a1;
     a->a2 = a2;
     return (Animation*)a;
