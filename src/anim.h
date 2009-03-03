@@ -1,6 +1,8 @@
 #ifndef __ANIM_H__
 #define __ANIM_H__
 
+#include <glib.h>
+
 /* Animations
  *
  * Animations change values over time.  All primitive animations take 1 unit of time.
@@ -76,5 +78,19 @@ Animation* identity(Animation *a);          /* apply the identity transformation
 Animation* sinusoid(Animation *a);          /* apply the sinusoid transformation to an animation */
 Animation* reverse(Animation *a);           /* apply the reverse transformation to an animation */
 Animation* exponent(Animation* a, float f); /* apply the exponent transformation to an animation */
+
+
+/* Animation Runner
+ *
+ * Animation Runners keep track of the start time of an animation and keep it up to date.
+ */
+
+struct AnimationRunnerStruct;
+typedef struct AnimationRunnerStruct AnimationRunner;
+
+AnimationRunner* animation_runner(Animation* a);             /* create a runner for an animation */
+void animation_runner_start(AnimationRunner* runner);        /* start the animation at the current time */
+gboolean animation_runner_update(AnimationRunner* runner);   /* update based on the current time.  returns TRUE if more animation remains. */
+void animation_runner_free(AnimationRunner* runner);         /* free the runner and its animation */
 
 #endif

@@ -17,6 +17,47 @@ void assert_rangei(int x, int bottom, int top) {
     g_assert_cmpint(x, <=, top);
 }
 
+/* animation runners */
+
+struct AnimationRunnerStruct {
+    Animation* animation;
+    float duration;
+    GTimeVal start_time;
+};
+
+AnimationRunner* animation_runner(Animation* a) {
+    AnimationRunner* r = malloc(sizeof(AnimationRunner));
+    r->animation          = a;
+    r->duration           = animation_duration(a);
+    r->start_time.tv_sec  = 0;
+    r->start_time.tv_usec = 0;
+    return r;
+}
+
+void animation_runner_start(AnimationRunner* r) {
+    g_get_current_time(&r->start_time);
+}
+
+gboolean animation_runner_update(AnimationRunner* r) {
+    GTimeVal now;
+    g_get_current_time(&now);
+
+    float t = ((float)(now.tv_sec - r->start_time.tv_sec)) + (((float)(now.tv_usec - r->start_time.tv_usec)) / (float)G_USEC_PER_SEC);
+
+    if (t < r->duration) {
+        update_animation(r->animation, t);
+        return TRUE;
+    } else {
+        update_animation(r->animation, r->duration);
+        return FALSE;
+    }
+}
+
+void animation_runner_free(AnimationRunner* r) {
+    free_animation(r->animation);
+    free(r);
+}
+
 /* time transformations - modify the relationship between external time and animation time by transforming numbers in the range [0,1] */
 
 typedef float (*TimeTransformFunction)(TimeTransform*, float);
