@@ -6,3 +6,6 @@ There are three ways to modify an animation:
 - Modify the rate that time passes within an animation (identity, sinusoid, exponent, reverse).
 - Modify the duration of an animation (scale)
 - Combine animations (sequence, parallel)
+
+Derived values (derivef, derivei) are attached to animations (attach) and updated as the animation progresses.
+For example, you might animation `theta' for a rotating object and then derive `x' and `y' from theta.

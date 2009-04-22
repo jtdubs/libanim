@@ -32,6 +32,24 @@ Animation* lineari1(int*   v, int   start, int   end); /* animate value v from s
 Animation* bezierf(float* v, int n, int m, float** control_points); /* animate n-dimensional point v along bezier with m control points */
 
 
+/* Derived Values
+ *
+ * Derived values are attached to animations and are automatically updated as the animation progresses.
+ */
+
+struct DerivedValueStruct;
+typedef struct DerivedValueStruct DerivedValue;
+
+typedef float (*TransformF)(float); /* a (hopefully) pure function which transforms a float.  e.g. sinf   */
+typedef int   (*TransformI)(int);   /* a (hopefully) pure function which transforms an int.   e.g. (>> 1) */
+
+DerivedValue* derivef(TransformF f, float* in, float* out); /* derive in from out using the transform f */
+DerivedValue* derivei(TransformI f, int*   in, int*   out); /* derive in from out using the transform f */
+
+Animation* attach(Animation*, DerivedValue*);       /* attach a derived value to an animation */
+Animation* attachn(Animation*, DerivedValue*, ...); /* attach a null-terminated list of derived values to an animation */
+
+
 /* Time Transformations
  *
  * Time Transformations modify the internal rate of time.

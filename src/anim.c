@@ -354,9 +354,9 @@ Animation* bezierf(float* v, int n, int m, float** control_points) {
     int i;
 
     BezierAnimationF* a = malloc(sizeof(BezierAnimationF));
-    a->a.update   = bezier_animationf_update;
-    a->a.duration = default_animation_duration;
-    a->a.free     = bezier_animationf_free;
+    a->a.update         = bezier_animationf_update;
+    a->a.duration       = default_animation_duration;
+    a->a.free           = bezier_animationf_free;
     a->v               = v;
     a->n               = n;
     a->m               = m;
@@ -397,9 +397,9 @@ Animation* scale(Animation* a, float scale_factor) {
     g_assert_cmpfloat(scale_factor, !=, 0);
 
     ScaledAnimation* s = malloc(sizeof(ScaledAnimation));
-    s->a.update     = scaled_animation_update;
-    s->a.duration   = scaled_animation_duration;
-    s->a.free       = scaled_animation_free;
+    s->a.update         = scaled_animation_update;
+    s->a.duration       = scaled_animation_duration;
+    s->a.free           = scaled_animation_free;
     s->child        = a;
     s->scale_factor = scale_factor;
     return (Animation*)s;
@@ -620,4 +620,127 @@ Animation* exponent(Animation* a, float f) {
     g_assert(a != NULL);
     g_assert_cmpfloat(f, !=, 0.0);
     return transform(a, exponent_transform(f));
+}
+
+/* derived values */
+
+typedef void (*UpdateDerivedValueFunction)(DerivedValue*);
+typedef void (*FreeDerivedValueFunction)(DerivedValue*);
+
+struct DerivedValueStruct {
+    UpdateDerivedValueFunction update;
+    FreeDerivedValueFunction free;
+};
+
+void derived_value_update(DerivedValue* dv) {
+    dv->update(dv);
+}
+
+void derived_value_free(DerivedValue* dv) {
+    dv->free(dv);
+}
+
+void default_derived_value_free(DerivedValue* dv) {
+    free(dv);
+}
+
+/* derived floats */
+
+typedef struct DerivedFloatStruct {
+    DerivedValue dv;
+    TransformF transform;
+    float* in;
+    float* out;
+} DerivedFloat;
+
+void derived_float_update(DerivedValue* dv) {
+    DerivedFloat *df = (DerivedFloat*)dv;
+    *df->out = df->transform(*df->in);
+}
+
+DerivedValue* derivef(TransformF f, float* in, float* out) {
+    DerivedFloat *df = (DerivedFloat*)malloc(sizeof(DerivedFloat));
+    df->dv.update = derived_float_update;
+    df->dv.free   = default_derived_value_free;
+    df->transform = f;
+    df->in        = in;
+    df->out       = out;
+    return (DerivedValue*)df;
+}
+
+/* derived ints */
+
+typedef struct DerivedIntStruct {
+    DerivedValue dv;
+    TransformI transform;
+    int* in;
+    int* out;
+} DerivedInt;
+
+void derived_int_update(DerivedValue* dv) {
+    DerivedInt *di = (DerivedInt*)dv;
+    *di->out = di->transform(*di->in);
+}
+
+DerivedValue* derivei(TransformI f, int* in, int* out) {
+    DerivedInt *di = (DerivedInt*)malloc(sizeof(DerivedInt));
+    di->dv.update = derived_int_update;
+    di->dv.free   = default_derived_value_free;
+    di->transform = f;
+    di->in        = in;
+    di->out       = out;
+    return (DerivedValue*)di;
+}
+
+/* derived value animation */
+
+typedef struct DerivedAnimationStruct {
+    Animation a;
+    Animation* child;
+    DerivedValue* dv;
+} DerivedAnimation;
+
+void derived_animation_update(Animation* a, float f) {
+    DerivedAnimation* da = (DerivedAnimation*)a;
+    animation_update(da->child, f);
+    derived_value_update(da->dv);
+}
+
+void derived_animation_free(Animation* a) {
+    DerivedAnimation* da = (DerivedAnimation*)a;
+    derived_value_free(da->dv);
+    animation_free(da->child);
+}
+
+float derived_animation_duration(Animation* a) {
+    DerivedAnimation* da = (DerivedAnimation*)a;
+    return animation_duration(da->child);
+}
+
+Animation* attach(Animation* a, DerivedValue *dv) {
+    g_assert(a != NULL);
+    g_assert(dv != NULL);
+
+    DerivedAnimation* da = malloc(sizeof(DerivedAnimation));
+    da->a.update   = derived_animation_update;
+    da->a.duration = derived_animation_duration;
+    da->a.free     = derived_animation_free;
+    da->child = a;
+    da->dv    = dv;
+    return (Animation*)da;
+}
+
+Animation* attachn(Animation *a, DerivedValue *dv1, ...) {
+    Animation *result = attach(a, dv1);
+
+    va_list args;
+    va_start(args, dv1);
+    while (TRUE) {
+        DerivedValue* dv = va_arg(args, DerivedValue*);
+        if (dv == NULL)
+            break;
+        result = attach(result, dv);
+    }
+
+    return result;
 }
