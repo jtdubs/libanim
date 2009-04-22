@@ -40,11 +40,17 @@ Animation* bezierf(float* v, int n, int m, float** control_points); /* animate n
 struct DerivedValueStruct;
 typedef struct DerivedValueStruct DerivedValue;
 
-typedef float (*TransformF)(float); /* a (hopefully) pure function which transforms a float.  e.g. sinf   */
-typedef int   (*TransformI)(int);   /* a (hopefully) pure function which transforms an int.   e.g. (>> 1) */
+typedef void (*TransformF)(int n, float* in, float* out); /* transforms the n-dimensional value in into the arbitrary-dimensional value out. (e.g. vector_normal) */
+typedef void (*TransformI)(int n, int*   in, int*   out); /* transforms the n-dimensional value in into the arbitrary-dimensional value out. */
 
-DerivedValue* derivef(TransformF f, float* in, float* out); /* derive in from out using the transform f */
-DerivedValue* derivei(TransformI f, int*   in, int*   out); /* derive in from out using the transform f */
+typedef float (*TransformF1)(float); /* a (hopefully) pure function which transforms a float. (e.g. sinf)   */
+typedef int   (*TransformI1)(int);   /* a (hopefully) pure function which transforms an int.  (e.g. (>> 1)) */
+
+DerivedValue* derivef(TransformF f, int n, float* in, float* out); /* derive arbitrary-dimensional value out from n-dimensional value in using the transform f */
+DerivedValue* derivei(TransformI i, int n, int*   in, int*   out); /* derive arbitrary-dimensional value out from n-dimensional value in using the transform f */
+
+DerivedValue* derivef1(TransformF1 f, float* in, float* out); /* derive in from out using the pure transform f */
+DerivedValue* derivei1(TransformI1 f, int*   in, int*   out); /* derive in from out using the pure transform f */
 
 Animation* attach(Animation*, DerivedValue*);       /* attach a derived value to an animation */
 Animation* attachn(Animation*, DerivedValue*, ...); /* attach a null-terminated list of derived values to an animation */

@@ -649,20 +649,22 @@ void default_derived_value_free(DerivedValue* dv) {
 typedef struct DerivedFloatStruct {
     DerivedValue dv;
     TransformF transform;
+    int n;
     float* in;
     float* out;
 } DerivedFloat;
 
 void derived_float_update(DerivedValue* dv) {
     DerivedFloat *df = (DerivedFloat*)dv;
-    *df->out = df->transform(*df->in);
+    df->transform(df->n, df->in, df->out);
 }
 
-DerivedValue* derivef(TransformF f, float* in, float* out) {
+DerivedValue* derivef(TransformF f, int n, float* in, float* out) {
     DerivedFloat *df = (DerivedFloat*)malloc(sizeof(DerivedFloat));
     df->dv.update = derived_float_update;
     df->dv.free   = default_derived_value_free;
     df->transform = f;
+    df->n         = n;
     df->in        = in;
     df->out       = out;
     return (DerivedValue*)df;
@@ -673,18 +675,68 @@ DerivedValue* derivef(TransformF f, float* in, float* out) {
 typedef struct DerivedIntStruct {
     DerivedValue dv;
     TransformI transform;
+    int n;
     int* in;
     int* out;
 } DerivedInt;
 
 void derived_int_update(DerivedValue* dv) {
     DerivedInt *di = (DerivedInt*)dv;
+    di->transform(di->n, di->in, di->out);
+}
+
+DerivedValue* derivei(TransformI f, int n, int* in, int* out) {
+    DerivedInt *di = (DerivedInt*)malloc(sizeof(DerivedInt));
+    di->dv.update = derived_int_update;
+    di->dv.free   = default_derived_value_free;
+    di->transform = f;
+    di->n         = n;
+    di->in        = in;
+    di->out       = out;
+    return (DerivedValue*)di;
+}
+
+/* pure derived floats */
+
+typedef struct DerivedFloat1Struct {
+    DerivedValue dv;
+    TransformF1 transform;
+    float* in;
+    float* out;
+} DerivedFloat1;
+
+void derived_float_1_update(DerivedValue* dv) {
+    DerivedFloat1 *df = (DerivedFloat1*)dv;
+    *df->out = df->transform(*df->in);
+}
+
+DerivedValue* derivef1(TransformF1 f, float* in, float* out) {
+    DerivedFloat1 *df = (DerivedFloat1*)malloc(sizeof(DerivedFloat1));
+    df->dv.update = derived_float_1_update;
+    df->dv.free   = default_derived_value_free;
+    df->transform = f;
+    df->in        = in;
+    df->out       = out;
+    return (DerivedValue*)df;
+}
+
+/* pure derived ints */
+
+typedef struct DerivedInt1Struct {
+    DerivedValue dv;
+    TransformI1 transform;
+    int* in;
+    int* out;
+} DerivedInt1;
+
+void derived_int_1_update(DerivedValue* dv) {
+    DerivedInt1 *di = (DerivedInt1*)dv;
     *di->out = di->transform(*di->in);
 }
 
-DerivedValue* derivei(TransformI f, int* in, int* out) {
-    DerivedInt *di = (DerivedInt*)malloc(sizeof(DerivedInt));
-    di->dv.update = derived_int_update;
+DerivedValue* derivei1(TransformI1 f, int* in, int* out) {
+    DerivedInt1 *di = (DerivedInt1*)malloc(sizeof(DerivedInt1));
+    di->dv.update = derived_int_1_update;
     di->dv.free   = default_derived_value_free;
     di->transform = f;
     di->in        = in;
