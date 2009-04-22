@@ -8,3 +8,4 @@ Description: Animation combinator library
 Version: @VERSION@
 Libs: -L${libdir} -lanim -lm
 Cflags: -I${includedir}
+Requires: glib-2.0
