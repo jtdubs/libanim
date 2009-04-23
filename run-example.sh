@@ -8,8 +8,9 @@ make -C src
 gnuplot > plot.png <<EOF
 set terminal png
 plot "output" using 1:2 title 'Theta'  with lines, \
-     "output" using 1:3 title 'Cos'    with lines, \
-     "output" using 1:4 title 'Sin'    with lines
+     "output" using 1:3 title 'Vx'     with lines, \
+     "output" using 1:4 title 'Vy'     with lines, \
+     "output" using 1:5 title 'R'      with lines
 EOF
 
 eog plot.png
