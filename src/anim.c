@@ -680,6 +680,34 @@ void concrete_derived_value_update_ii(DerivedValue* dv) {
     *((int*)cdv->out) = ((TransformII)cdv->transform)(*((int*)cdv->in));
 }
 
+void concrete_derived_value_update_ffn(DerivedValue* dv) {
+    int i;
+    ConcreteDerivedValue *cdv = (ConcreteDerivedValue*)dv;
+    for (i = 0; i < cdv->n; i++)
+        ((float*)cdv->out)[i] = ((TransformFF)cdv->transform)(((float*)cdv->in)[i]);
+}
+
+void concrete_derived_value_update_fin(DerivedValue* dv) {
+    int i;
+    ConcreteDerivedValue *cdv = (ConcreteDerivedValue*)dv;
+    for (i = 0; i < cdv->n; i++)
+        ((int*)cdv->out)[i] = ((TransformFI)cdv->transform)(((float*)cdv->in)[i]);
+}
+
+void concrete_derived_value_update_ifn(DerivedValue* dv) {
+    int i;
+    ConcreteDerivedValue *cdv = (ConcreteDerivedValue*)dv;
+    for (i = 0; i < cdv->n; i++)
+        ((float*)cdv->out)[i] = ((TransformIF)cdv->transform)(((int*)cdv->in)[i]);
+}
+
+void concrete_derived_value_update_iin(DerivedValue* dv) {
+    int i;
+    ConcreteDerivedValue *cdv = (ConcreteDerivedValue*)dv;
+    for (i = 0; i < cdv->n; i++)
+        ((int*)cdv->out)[i] = ((TransformII)cdv->transform)(((int*)cdv->in)[i]);
+}
+
 DerivedValue* mk_cdv(UpdateDerivedValueFunction update, void* f, int n, void* in, void* out) {
     ConcreteDerivedValue *cdv = (ConcreteDerivedValue*)malloc(sizeof(ConcreteDerivedValue));
     cdv->dv.update = update;
@@ -709,6 +737,22 @@ DerivedValue* deriveif(TransformIF f, int* in, float* out) {
 
 DerivedValue* deriveii(TransformII f, int* in, int* out) {
     return mk_cdv(concrete_derived_value_update_ii, f, 1, in, out);
+}
+
+DerivedValue* deriveffn(TransformFF f, int n, float* in, float* out) {
+    return mk_cdv(concrete_derived_value_update_ffn, f, n, in, out);
+}
+
+DerivedValue* derivefin(TransformFI f, int n, float* in, int* out) {
+    return mk_cdv(concrete_derived_value_update_fin, f, n, in, out);
+}
+
+DerivedValue* deriveifn(TransformIF f, int n, int* in, float* out) {
+    return mk_cdv(concrete_derived_value_update_ifn, f, n, in, out);
+}
+
+DerivedValue* deriveiin(TransformII f, int n, int* in, int* out) {
+    return mk_cdv(concrete_derived_value_update_iin, f, n, in, out);
 }
 
 /* derived value animation */
