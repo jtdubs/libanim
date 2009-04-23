@@ -115,10 +115,10 @@ DerivedValue* deriveff(TransformFF f, float* in, float* out);
 DerivedValue* derivefi(TransformFI f, float* in, int*   out);
 DerivedValue* deriveif(TransformIF f, int*   in, float* out);
 DerivedValue* deriveii(TransformII f, int*   in, int*   out);
-DerivedValue* deriveffn(TransformFF f, int n, float* in, float* out);
-DerivedValue* derivefin(TransformFI f, int n, float* in, int* out);
-DerivedValue* deriveifn(TransformIF f, int n, int* in,   float* out);
-DerivedValue* deriveiin(TransformII f, int n, int* in,   int* out);
+DerivedValue* mapderiveff(TransformFF f, int n, float* in, float* out);
+DerivedValue* mapderivefi(TransformFI f, int n, float* in, int* out);
+DerivedValue* mapderiveif(TransformIF f, int n, int* in,   float* out);
+DerivedValue* mapderiveii(TransformII f, int n, int* in,   int* out);
 
 Animation* attach(Animation*, DerivedValue*);       /* attach a derived value to an animation */
 Animation* attachn(Animation*, DerivedValue*, ...); /* attach a null-terminated list of derived values to an animation */

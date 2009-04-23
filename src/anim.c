@@ -739,19 +739,19 @@ DerivedValue* deriveii(TransformII f, int* in, int* out) {
     return mk_cdv(concrete_derived_value_update_ii, f, 1, in, out);
 }
 
-DerivedValue* deriveffn(TransformFF f, int n, float* in, float* out) {
+DerivedValue* mapderiveff(TransformFF f, int n, float* in, float* out) {
     return mk_cdv(concrete_derived_value_update_ffn, f, n, in, out);
 }
 
-DerivedValue* derivefin(TransformFI f, int n, float* in, int* out) {
+DerivedValue* mapderivefi(TransformFI f, int n, float* in, int* out) {
     return mk_cdv(concrete_derived_value_update_fin, f, n, in, out);
 }
 
-DerivedValue* deriveifn(TransformIF f, int n, int* in, float* out) {
+DerivedValue* mapderiveif(TransformIF f, int n, int* in, float* out) {
     return mk_cdv(concrete_derived_value_update_ifn, f, n, in, out);
 }
 
-DerivedValue* deriveiin(TransformII f, int n, int* in, int* out) {
+DerivedValue* mapderiveii(TransformII f, int n, int* in, int* out) {
     return mk_cdv(concrete_derived_value_update_iin, f, n, in, out);
 }
 
