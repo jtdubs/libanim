@@ -32,28 +32,6 @@ Animation* lineari1(int*   v, int   start, int   end); /* animate value v from s
 Animation* bezierf(float* v, int n, int m, float** control_points); /* animate n-dimensional point v along bezier with m control points */
 
 
-/* Derived Values
- *
- * Derived values are attached to animations and are automatically updated as the animation progresses.
- */
-
-struct DerivedValueStruct;
-typedef struct DerivedValueStruct DerivedValue;
-
-typedef void (*TransformF)(int n, float* in, float* out); /* transforms the n-dimensional value in into the arbitrary-dimensional value out. (e.g. vector_normal) */
-typedef void (*TransformI)(int n, int*   in, int*   out); /* transforms the n-dimensional value in into the arbitrary-dimensional value out. */
-
-typedef float (*TransformF1)(float); /* a (hopefully) pure function which transforms a float. (e.g. sinf)   */
-typedef int   (*TransformI1)(int);   /* a (hopefully) pure function which transforms an int.  (e.g. (>> 1)) */
-
-DerivedValue* derivef(TransformF f, int n, float* in, float* out); /* derive arbitrary-dimensional value out from n-dimensional value in using the transform f */
-DerivedValue* derivei(TransformI i, int n, int*   in, int*   out); /* derive arbitrary-dimensional value out from n-dimensional value in using the transform f */
-
-DerivedValue* derivef1(TransformF1 f, float* in, float* out); /* derive in from out using the pure transform f */
-DerivedValue* derivei1(TransformI1 f, int*   in, int*   out); /* derive in from out using the pure transform f */
-
-Animation* attach(Animation*, DerivedValue*);       /* attach a derived value to an animation */
-Animation* attachn(Animation*, DerivedValue*, ...); /* attach a null-terminated list of derived values to an animation */
 
 
 /* Time Transformations
@@ -116,5 +94,29 @@ AnimationRunner* animation_runner(Animation*);              /* create a runner f
 void             animation_runner_start(AnimationRunner*);  /* start the animation at the current time */
 gboolean         animation_runner_update(AnimationRunner*); /* update based on the current time.  returns TRUE if more animation remains. */
 void             animation_runner_free(AnimationRunner*);   /* free the runner and its animation */
+
+
+/* Derived Values
+ *
+ * Derived values are attached to animations and are automatically updated as the animation progresses.
+ */
+
+struct DerivedValueStruct;
+typedef struct DerivedValueStruct DerivedValue;
+
+typedef void  (*TransformN)(int n, void* in, void* out);
+typedef float (*TransformFF)(float);
+typedef int   (*TransformFI)(float);
+typedef float (*TransformIF)(int);
+typedef int   (*TransformII)(int);
+
+DerivedValue* derive(TransformN f, int n, void* in, void* out);
+DerivedValue* deriveff(TransformFF f, float* in, float* out);
+DerivedValue* derivefi(TransformFI f, float* in, int*   out);
+DerivedValue* deriveif(TransformIF f, int*   in, float* out);
+DerivedValue* deriveii(TransformII f, int*   in, int*   out);
+
+Animation* attach(Animation*, DerivedValue*);       /* attach a derived value to an animation */
+Animation* attachn(Animation*, DerivedValue*, ...); /* attach a null-terminated list of derived values to an animation */
 
 #endif

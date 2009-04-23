@@ -6,7 +6,7 @@ include_HEADERS = anim.h
 TESTS = test
 
 example_SOURCES = example.c
-example_CFLAGS  = -ansi -Wall -Werror $(DEPS_CFLAGS) -g
+example_CFLAGS  = -std=c99 -Wall -Werror $(DEPS_CFLAGS) -g
 example_LDADD   = $(DEPS_LIBS) -lanim -lm
 
 libanim_la_SOURCES = anim.c

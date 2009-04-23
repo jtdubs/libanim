@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 /* utilities */
 
@@ -644,104 +645,70 @@ void default_derived_value_free(DerivedValue* dv) {
     free(dv);
 }
 
-/* derived floats */
+/* concrete derived values */
 
-typedef struct DerivedFloatStruct {
+typedef struct ConcreteDerivedValueStruct {
     DerivedValue dv;
-    TransformF transform;
+    void* transform;
     int n;
-    float* in;
-    float* out;
-} DerivedFloat;
+    void* in;
+    void* out;
+} ConcreteDerivedValue;
 
-void derived_float_update(DerivedValue* dv) {
-    DerivedFloat *df = (DerivedFloat*)dv;
-    df->transform(df->n, df->in, df->out);
+void concrete_derived_value_update(DerivedValue* dv) {
+    ConcreteDerivedValue *cdv = (ConcreteDerivedValue*)dv;
+    ((TransformN)cdv->transform)(cdv->n, cdv->in, cdv->out);
 }
 
-DerivedValue* derivef(TransformF f, int n, float* in, float* out) {
-    DerivedFloat *df = (DerivedFloat*)malloc(sizeof(DerivedFloat));
-    df->dv.update = derived_float_update;
-    df->dv.free   = default_derived_value_free;
-    df->transform = f;
-    df->n         = n;
-    df->in        = in;
-    df->out       = out;
-    return (DerivedValue*)df;
+void concrete_derived_value_update_ff(DerivedValue* dv) {
+    ConcreteDerivedValue *cdv = (ConcreteDerivedValue*)dv;
+    *((float*)cdv->out) = ((TransformFF)cdv->transform)(*((float*)cdv->in));
 }
 
-/* derived ints */
-
-typedef struct DerivedIntStruct {
-    DerivedValue dv;
-    TransformI transform;
-    int n;
-    int* in;
-    int* out;
-} DerivedInt;
-
-void derived_int_update(DerivedValue* dv) {
-    DerivedInt *di = (DerivedInt*)dv;
-    di->transform(di->n, di->in, di->out);
+void concrete_derived_value_update_fi(DerivedValue* dv) {
+    ConcreteDerivedValue *cdv = (ConcreteDerivedValue*)dv;
+    *((int*)cdv->out) = ((TransformFI)cdv->transform)(*((float*)cdv->in));
 }
 
-DerivedValue* derivei(TransformI f, int n, int* in, int* out) {
-    DerivedInt *di = (DerivedInt*)malloc(sizeof(DerivedInt));
-    di->dv.update = derived_int_update;
-    di->dv.free   = default_derived_value_free;
-    di->transform = f;
-    di->n         = n;
-    di->in        = in;
-    di->out       = out;
-    return (DerivedValue*)di;
+void concrete_derived_value_update_if(DerivedValue* dv) {
+    ConcreteDerivedValue *cdv = (ConcreteDerivedValue*)dv;
+    *((float*)cdv->out) = ((TransformIF)cdv->transform)(*((int*)cdv->in));
 }
 
-/* pure derived floats */
-
-typedef struct DerivedFloat1Struct {
-    DerivedValue dv;
-    TransformF1 transform;
-    float* in;
-    float* out;
-} DerivedFloat1;
-
-void derived_float_1_update(DerivedValue* dv) {
-    DerivedFloat1 *df = (DerivedFloat1*)dv;
-    *df->out = df->transform(*df->in);
+void concrete_derived_value_update_ii(DerivedValue* dv) {
+    ConcreteDerivedValue *cdv = (ConcreteDerivedValue*)dv;
+    *((int*)cdv->out) = ((TransformII)cdv->transform)(*((int*)cdv->in));
 }
 
-DerivedValue* derivef1(TransformF1 f, float* in, float* out) {
-    DerivedFloat1 *df = (DerivedFloat1*)malloc(sizeof(DerivedFloat1));
-    df->dv.update = derived_float_1_update;
-    df->dv.free   = default_derived_value_free;
-    df->transform = f;
-    df->in        = in;
-    df->out       = out;
-    return (DerivedValue*)df;
+DerivedValue* mk_cdv(UpdateDerivedValueFunction update, void* f, int n, void* in, void* out) {
+    ConcreteDerivedValue *cdv = (ConcreteDerivedValue*)malloc(sizeof(ConcreteDerivedValue));
+    cdv->dv.update = update;
+    cdv->dv.free   = default_derived_value_free;
+    cdv->transform = f;
+    cdv->n         = n;
+    cdv->in        = in;
+    cdv->out       = out;
+    return (DerivedValue*)cdv;
 }
 
-/* pure derived ints */
-
-typedef struct DerivedInt1Struct {
-    DerivedValue dv;
-    TransformI1 transform;
-    int* in;
-    int* out;
-} DerivedInt1;
-
-void derived_int_1_update(DerivedValue* dv) {
-    DerivedInt1 *di = (DerivedInt1*)dv;
-    *di->out = di->transform(*di->in);
+DerivedValue* derive(TransformN f, int n, void* in, void* out) {
+    return mk_cdv(concrete_derived_value_update, f, n, in, out);
 }
 
-DerivedValue* derivei1(TransformI1 f, int* in, int* out) {
-    DerivedInt1 *di = (DerivedInt1*)malloc(sizeof(DerivedInt1));
-    di->dv.update = derived_int_1_update;
-    di->dv.free   = default_derived_value_free;
-    di->transform = f;
-    di->in        = in;
-    di->out       = out;
-    return (DerivedValue*)di;
+DerivedValue* deriveff(TransformFF f, float* in, float* out) {
+    return mk_cdv(concrete_derived_value_update_ff, f, 1, in, out);
+}
+
+DerivedValue* derivefi(TransformFI f, float* in, int* out) {
+    return mk_cdv(concrete_derived_value_update_fi, f, 1, in, out);
+}
+
+DerivedValue* deriveif(TransformIF f, int* in, float* out) {
+    return mk_cdv(concrete_derived_value_update_if, f, 1, in, out);
+}
+
+DerivedValue* deriveii(TransformII f, int* in, int* out) {
+    return mk_cdv(concrete_derived_value_update_ii, f, 1, in, out);
 }
 
 /* derived value animation */
