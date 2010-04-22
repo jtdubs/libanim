@@ -111,18 +111,18 @@ TimeTransform* reverse_transform() {
 
 /* exponent transform */
 
-typedef struct exponentonentTransformStruct {
+typedef struct exponentTransformStruct {
     TimeTransform t;
     float exponent;
-} exponentonentTransform;
+} exponentTransform;
 
 float exponent_transform_function(TimeTransform* t, float f) {
-    exponentonentTransform* e = (exponentonentTransform*)t;
+    exponentTransform* e = (exponentTransform*)t;
     return pow(f, e->exponent);
 }
 
 TimeTransform* exponent_transform(float exponent) {
-    exponentonentTransform* t = malloc(sizeof(exponentonentTransform));
+    exponentTransform* t = malloc(sizeof(exponentTransform));
     t->t.f = exponent_transform_function;
     t->exponent = exponent;
     return (TimeTransform*)t;
